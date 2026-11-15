@@ -1,0 +1,140 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:models="clr-namespace:DormitoryXml.Code.Models"
+             x:Class="DormitoryXml.UI.MainPage"
+             Title="Гуртожиток · XML"
+             BackgroundColor="#0F1117">
+
+    <ContentPage.Resources>
+        <Style x:Key="Card" TargetType="Border">
+            <Setter Property="BackgroundColor" Value="#1A1D27" />
+            <Setter Property="Stroke" Value="#2A2F3D" />
+            <Setter Property="StrokeShape" Value="RoundRectangle 14" />
+            <Setter Property="Padding" Value="16" />
+        </Style>
+        <Style x:Key="Primary" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#6366F1" />
+            <Setter Property="TextColor" Value="White" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="18,10" />
+        </Style>
+        <Style x:Key="Secondary" TargetType="Button">
+            <Setter Property="BackgroundColor" Value="#2A2F55" />
+            <Setter Property="TextColor" Value="#A5B4FC" />
+            <Setter Property="CornerRadius" Value="10" />
+            <Setter Property="Padding" Value="18,10" />
+        </Style>
+        <Style x:Key="Caption" TargetType="Label">
+            <Setter Property="TextColor" Value="#9CA3AF" />
+            <Setter Property="FontSize" Value="12" />
+        </Style>
+        <Style TargetType="Label">
+            <Setter Property="TextColor" Value="#E5E7EB" />
+        </Style>
+        <Style TargetType="Picker">
+            <Setter Property="TextColor" Value="#E5E7EB" />
+            <Setter Property="TitleColor" Value="#9CA3AF" />
+            <Setter Property="BackgroundColor" Value="#222636" />
+        </Style>
+        <Style TargetType="Entry">
+            <Setter Property="TextColor" Value="#E5E7EB" />
+            <Setter Property="PlaceholderColor" Value="#6B7280" />
+            <Setter Property="BackgroundColor" Value="#222636" />
+        </Style>
+    </ContentPage.Resources>
+
+    <Grid RowDefinitions="Auto,Auto,Auto,*,Auto" RowSpacing="14" Padding="24">
+
+        <VerticalStackLayout Grid.Row="0" Spacing="2">
+            <Label Text="🏠 Гуртожиток" FontSize="28" FontAttributes="Bold" TextColor="#818CF8" />
+            <Label Text="Пошук у XML (SAX / DOM / LINQ) та перетворення в HTML за XSL" Style="{StaticResource Caption}" FontSize="14" />
+        </VerticalStackLayout>
+
+        <Border Grid.Row="1" Style="{StaticResource Card}">
+            <Grid ColumnDefinitions="Auto,*" ColumnSpacing="16">
+                <Button Grid.Column="0" Text="📂 Завантажити XML" Style="{StaticResource Primary}"
+                        Clicked="OnLoadXmlClicked" VerticalOptions="Center" />
+                <VerticalStackLayout Grid.Column="1" VerticalOptions="Center">
+                    <Label x:Name="XmlPathLabel" Text="XML-файл не обрано" FontAttributes="Bold" />
+                    <Label x:Name="StatusLabel" Style="{StaticResource Caption}"
+                           Text="Спочатку завантажте XML – значення фільтрів підтягнуться з файлу." />
+                </VerticalStackLayout>
+            </Grid>
+        </Border>
+
+        <Border Grid.Row="2" Style="{StaticResource Card}">
+            <VerticalStackLayout Spacing="12">
+                <Label Text="Параметри пошуку" FontAttributes="Bold" FontSize="16" />
+
+                <Grid ColumnDefinitions="*,*,*" ColumnSpacing="12" RowDefinitions="Auto,Auto,Auto" RowSpacing="10">
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="0">
+                        <Label Text="Факультет" Style="{StaticResource Caption}" />
+                        <Picker x:Name="FacultyPicker" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="1">
+                        <Label Text="Кафедра" Style="{StaticResource Caption}" />
+                        <Picker x:Name="DepartmentPicker" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="0" Grid.Column="2">
+                        <Label Text="Курс" Style="{StaticResource Caption}" />
+                        <Picker x:Name="CoursePicker" />
+                    </VerticalStackLayout>
+
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="0">
+                        <Label Text="Гуртожиток" Style="{StaticResource Caption}" />
+                        <Picker x:Name="BuildingPicker" />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="1">
+                        <Label Text="Ключове слово" Style="{StaticResource Caption}" />
+                        <Entry x:Name="KeywordEntry" Placeholder="ПІП, телефон, кімната..." />
+                    </VerticalStackLayout>
+                    <VerticalStackLayout Grid.Row="1" Grid.Column="2">
+                        <Label Text="Спосіб аналізу XML" Style="{StaticResource Caption}" />
+                        <Picker x:Name="StrategyPicker" />
+                    </VerticalStackLayout>
+                </Grid>
+
+                <HorizontalStackLayout Spacing="10">
+                    <Button Text="🔍 Знайти" Style="{StaticResource Primary}" Clicked="OnSearchClicked" />
+                    <Button Text="🧹 Clear" Style="{StaticResource Secondary}" Clicked="OnClearClicked" />
+                </HorizontalStackLayout>
+            </VerticalStackLayout>
+        </Border>
+
+        <Border Grid.Row="3" Style="{StaticResource Card}">
+            <Grid RowDefinitions="Auto,*" RowSpacing="8">
+                <Label x:Name="ResultsLabel" Text="Результати" FontAttributes="Bold" FontSize="16" />
+                <CollectionView Grid.Row="1" x:Name="ResultsView" SelectionMode="None">
+                    <CollectionView.EmptyView>
+                        <Label Text="Тут з'являться результати пошуку" TextColor="#6B7280"
+                               HorizontalOptions="Center" VerticalOptions="Center" />
+                    </CollectionView.EmptyView>
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Student">
+                            <Border BackgroundColor="#222636" Stroke="#2A2F3D" StrokeShape="RoundRectangle 10"
+                                    Padding="12" Margin="0,0,0,8">
+                                <VerticalStackLayout Spacing="2">
+                                    <Label Text="{Binding FullName}" FontAttributes="Bold" FontSize="16" />
+                                    <Label Text="{Binding Subtitle}" TextColor="#D1D5DB" />
+                                    <Label Text="{Binding PhoneText}" Style="{StaticResource Caption}" />
+                                    <Label Text="{Binding ResidencesText}" TextColor="#A5B4FC" FontSize="13" />
+                                </VerticalStackLayout>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="4" ColumnDefinitions="*,Auto,Auto,Auto" ColumnSpacing="10">
+            <Label x:Name="XslLabel" Text="XSL-файл не обрано" Style="{StaticResource Caption}" VerticalOptions="Center" />
+            <Button Grid.Column="1" Text="📑 Обрати XSL" Style="{StaticResource Secondary}"
+                    Clicked="OnSelectXslClicked" />
+            <Button Grid.Column="2" Text="🌐 Трансформувати в HTML" Style="{StaticResource Primary}"
+                    Clicked="OnTransformClicked" />
+            <Button Grid.Column="3" Text="⏻ Вийти" BackgroundColor="#3B1D24" TextColor="#FCA5A5"
+                    CornerRadius="10" Clicked="OnExitRequested" />
+        </Grid>
+    </Grid>
+</ContentPage>
