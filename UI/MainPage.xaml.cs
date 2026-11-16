@@ -62,9 +62,7 @@ public partial class MainPage : ContentPage
 
         try
         {
-            searchContext.SetStrategy(strategies[StrategyPicker.SelectedIndex]);
-            results = searchContext.ExecuteSearch(xmlFilePath, ReadCriteria());
-            ShowResults();
+            RunSearch(xmlFilePath);
         }
         catch (Exception ex)
         {
@@ -72,11 +70,18 @@ public partial class MainPage : ContentPage
         }
     }
 
+    private void RunSearch(string xmlPath)
+    {
+        searchContext.SetStrategy(strategies[StrategyPicker.SelectedIndex]);
+        results = searchContext.ExecuteSearch(xmlPath, ReadCriteria());
+        ShowResults();
+    }
+
     private async void OnTransformClicked(object? sender, EventArgs e)
     {
-        if (xmlFilePath is null || results.Count == 0)
+        if (xmlFilePath is null)
         {
-            await DisplayAlertAsync("Увага", "Завантажте XML і виконайте пошук: у HTML потрапить лише знайдений список.", "OK");
+            await DisplayAlertAsync("Увага", "Спочатку завантажте XML-файл.", "OK");
             return;
         }
 
@@ -84,10 +89,17 @@ public partial class MainPage : ContentPage
         if (xsl is null) return;
 
         string xmlPath = xmlFilePath;
-        var selected = results.ToList();
 
         try
         {
+            RunSearch(xmlPath);
+            if (results.Count == 0)
+            {
+                await DisplayAlertAsync("Увага", "За цими параметрами нікого не знайдено.", "OK");
+                return;
+            }
+
+            var selected = results.ToList();
             string htmlPath = await Task.Run(() => htmlExporter.Export(selected, xmlPath, xsl));
             StatusLabel.Text = $"HTML збережено ({selected.Count} студ.): {htmlPath}";
             OpenInBrowser(htmlPath);

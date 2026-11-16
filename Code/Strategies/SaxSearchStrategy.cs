@@ -6,7 +6,7 @@ namespace DormitoryXml.Code.Strategies;
 
 public class SaxSearchStrategy : IXmlSearchStrategy
 {
-    public string Name => "SAX (XmlReader)";
+    public string Name => "SAX";
 
     public List<Student> Search(string path, SearchCriteria criteria)
     {

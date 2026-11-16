@@ -16,5 +16,5 @@ public class Student
 
     public string PhoneText => string.IsNullOrWhiteSpace(Phone) ? "тел.: —" : $"тел.: {Phone}";
 
-    public string ResidencesText => string.Join(Environment.NewLine, Residences.Select(r => "🏠 " + r));
+    public string ResidencesText => string.Join(Environment.NewLine, Residences.Select(r => r.ToString()));
 }

@@ -14,7 +14,11 @@ public partial class App : Application
 
 	protected override Window CreateWindow(IActivationState? activationState)
 	{
-		var window = new Window(new AppShell()) { Width = 1100, Height = 820, Title = "Гуртожиток · XML" };
+		var window = new Window(new AppShell()) {
+			Width = 1000, Height = 700,
+			MinimumWidth = 800, MinimumHeight = 600,
+			Title = "Гуртожиток · XML"
+		};
 
 #if WINDOWS
 		bool subscribed = false;

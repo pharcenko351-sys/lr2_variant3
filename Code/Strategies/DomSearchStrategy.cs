@@ -7,7 +7,7 @@ namespace DormitoryXml.Code.Strategies;
 
 public class DomSearchStrategy : IXmlSearchStrategy
 {
-    public string Name => "DOM (XmlDocument)";
+    public string Name => "DOM";
 
     public List<Student> Search(string path, SearchCriteria criteria)
     {
